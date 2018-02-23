@@ -1,0 +1,57 @@
+===================================================
+Highest rated movies with atleast 10 user ratings
+===================================================
+
+SELECT a.title, b.avgRating, b.countRating
+FROM movies a, (SELECT movie_id, COUNT(movie_id) AS countRating, AVG(rating) AS avgRating
+FROM ratings
+GROUP By movie_id) b
+WHERE a.id = b.movie_id
+AND b.countRating >= 10
+ORDER BY b.avgRating DESC
+LIMIT 10;
+
+
+***************************************************
+
+===================================================
+MySQL Grant all priviledges on movielens database
+===================================================
+
+GRANT ALL PRIVILEGES ON movielens.* to ''@'localhost';
+
+***************************************************
+
+===================================================
+Sqoop command to import from MySQL movielens database to HDFS
+(-m argument specifies number of mappers)
+===================================================
+
+sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver --table movies -m 1
+
+***************************************************
+
+===================================================
+Sqoop command to import from MySQL movielens database to HIVE
+(-m argument specifies number of mappers)
+===================================================
+
+sqoop import --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver --table movies -m 1 --hive-import
+
+***************************************************
+
+===================================================
+Sqoop command to export from HIVE to MySQL database
+(-m argument specifies number of mappers)
+===================================================
+
+sqoop export --connect jdbc:mysql://localhost/movielens --driver com.mysql.jdbc.Driver --table exported_movies -m 1 --export-dir /apps/hive/warehouse/movies --input-fields-terminated-by '\0001'
+
+
+
+To create MySQL Table prior to above command:
+
+CREATE TABLE exported_movies (id INTEGER, title VARCHAR(255), releaseDate DATE);
+
+***************************************************
+
