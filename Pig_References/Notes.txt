@@ -1,0 +1,24 @@
+--------------------------------------------------
+Pig Commands to load data from HDFS to HBase
+('users' table should exist in HBase before running below commands)
+--------------------------------------------------
+
+users = LOAD '/user/maria_dev/ml-100k/u.user' 
+USING PigStorage('|') 
+AS (userID:int, age:int, gender:chararray, occupation:chararray, zip:int);
+
+STORE users INTO 'hbase://users' 
+USING org.apache.pig.backend.hadoop.hbase.HBaseStorage (
+'userinfo:age,userinfo:gender,userinfo:occupation,userinfo:zip');
+
+**************************************************
+
+
+--------------------------------------------------
+To run a pig script
+(hive.pig is a script file)
+--------------------------------------------------
+
+pig hive.pig
+
+**************************************************

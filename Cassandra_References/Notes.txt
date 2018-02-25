@@ -1,0 +1,104 @@
+---------------------------------------------------
+Cassandra installation on Hortonworks
+---------------------------------------------------
+
+yum update
+
+
+yum install scl-utils
+
+
+#To Switch between python versions
+yum install centos-release-scl-rh
+
+
+yum install python27
+
+
+#Command to switch python version.
+#We need to do this everytime we have 
+#to switch to cassandra
+
+scl enable python27 bash 
+
+#check if present python version is 2.7
+python -V
+
+
+#we need to add cassandra repositories
+cd /etc/yum.repos.d
+
+#create a new file by any name (datastax.repo) 
+#and paste below content into it
+
+[datastax]
+name = DataStax Repo for Apache Cassandra
+baseurl = http://rpm.datastax.com/community
+enabled = 1
+gpgcheck=0
+
+
+#now we can install the package
+yum install dsc30
+
+
+#next we need to install python dependencies
+pip install cqlsh
+
+
+#now we can start cassandra service using below command:
+service cassandra start
+
+
+#access cql shell using below command:
+cqlsh --cqlversion="3.4.0"
+
+***************************************************
+
+---------------------------------------------------
+Create new Keyspace (Keyspace is similar to Database)
+---------------------------------------------------
+
+CREATE KEYSPACE movielens WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'} AND durable_writes = true;
+
+***************************************************
+
+---------------------------------------------------
+Use an existing Keyspace
+---------------------------------------------------
+
+USE movielens;
+
+***************************************************
+
+---------------------------------------------------
+Create a new table
+---------------------------------------------------
+
+CREATE TABLE users (user_id int, age int, gender text, occupation text, zip text, PRIMARY KEY(user_id));
+
+***************************************************
+
+---------------------------------------------------
+Describing an existing table
+---------------------------------------------------
+
+DESCRIBE TABLE users;
+
+***************************************************
+
+---------------------------------------------------
+Selecting data from existing table
+---------------------------------------------------
+
+SELECT * FROM users LIMIT 10;
+
+***************************************************
+
+---------------------------------------------------
+Stopping Cassandra Service
+---------------------------------------------------
+
+service cassandra stop
+
+***************************************************
